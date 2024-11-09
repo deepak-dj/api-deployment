@@ -1,0 +1,15 @@
+version: "3.8"
+
+
+services:
+  backend:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Redshift connection string (direct URL)
+#      REDSHIFT_URL: "redshift+psycopg2://awsuser:9411337680Dj@default-workgroup.423623868179.ap-southeast-2.redshift-serverless.amazonaws.com:5439/dev"
+      REDSHIFT_URL: ${REDSHIFT_URL}
+      command: uvicorn app.main:apps --host 0.0.0.0 --port 8000
+      restart: always
