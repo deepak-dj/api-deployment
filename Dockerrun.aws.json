@@ -11,7 +11,7 @@
   "containerDefinitions": [
     {
       "name": "app",
-      "image": "dokcerapi-backend",
+      "image": "djdocker001/dokcerapi-backend",
       "memory": 512,
       "essential": true,
       "portMappings": [
