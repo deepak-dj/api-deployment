@@ -44,5 +44,5 @@ jobs:
             cd /home/ubuntu/app
             git pull origin main  # Optional, if using git
             docker compose down
-            docker compose up -d
+            docker compose up --build -d
           EOF
