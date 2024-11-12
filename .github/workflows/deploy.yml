@@ -20,7 +20,13 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      # Test SSH connection to EC2 (Optional, for debugging)
+      # Ensure the private key is saved to /tmp/ssh_key with correct permissions
+      - name: Save SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/ssh_key
+          chmod 600 /tmp/ssh_key
+
+      # Test SSH connection (Optional, for debugging)
       - name: Test SSH connection
         run: |
           ssh -o StrictHostKeyChecking=no -T ubuntu@${{ secrets.EC2_PUBLIC_IP }}
@@ -28,9 +34,7 @@ jobs:
       # Copy code to EC2
       - name: Copy code to EC2
         run: |
-          # Make sure the SSH key is available in /tmp/ssh_key
-          echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/ssh_key
-          chmod 600 /tmp/ssh_key
+          # Ensure the correct file/directory is passed to scp
           scp -i /tmp/ssh_key -o StrictHostKeyChecking=no -r ./ ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app
 
       # Restart application on EC2
