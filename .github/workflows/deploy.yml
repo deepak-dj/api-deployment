@@ -25,18 +25,41 @@ jobs:
 
       # Step 4: Save Docker image to file
       - name: Save Docker image as a tarball
-        run: |
-          echo "EC2_HOST: ${{ secrets.EC2_HOST }}"
-                   echo "EC2_USERNAME: ${{ secrets.EC2_USERNAME }}"
-                   echo "SSH_KEY: ${SSH_KEY}"
+        run: |        
           docker save -o my-fastapi-app.tar my-fastapi-app:latest
 
       # Step 5: Deploy to EC2 instance
       - name: Deploy to EC2
         env:
-          HOST: ${{ secrets.EC2_HOST }}
-          USERNAME: ${{ secrets.EC2_USERNAME }}
-          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOST: 54.152.153.190
+          USERNAME: ubuntu
+          SSH_KEY: -----BEGIN RSA PRIVATE KEY-----
+                  MIIEpQIBAAKCAQEAzc67+Oxs9VqsehQ2xLAHS0T01fEwGkMP+rmk6bHZlImeOLkq
+                  foY3ZX95gFa9kkDxJ27EV7axr/WKKVpxYUPed2RP5TwS2P9v1WxLAZLAGgRCq1J7
+                  EU3oJlU/X7gjv9e2CNdUrVgO+n0So/FG7YCe2MAE5dLOoZ5j2OTR7/zU741gSMXz
+                  NnOiLK/AM9k4n/6iMS8W8K1+zOg548fvHlav0qPehVZFMTZLDti5wZ1t8G3JzrV9
+                  akTXmdASyXzt6e4B/Z1RqN22xtx9lzcaoD02B0J71cwbJtIxGVYn+I/EJbePojf7
+                  Df0D8GeRlTarT7MeTUHcqv/gNy0+gX0vkIgQYwIDAQABAoIBAQCMZc/NzFu4NRcc
+                  YNXL79nJ+0ya9mI+SCmKfUKHOhCYSBlr0MWwcpcv4npcls/UCgF5SRMgUz18MCEE
+                  fPKDy+zjvcbTNtwUtIzyJ2IzvIzYMrfYb/gMof0QyW7mOZQJt3ozJdJaPoxZTSF+
+                  PYaJVwkGDFhLADh+ALNUrySYdv48PBhj2XGahTXQ27O57SQZW1ImjsSnxwCHeJ6H
+                  +jvKVqpCzU60OzSFr90mqvIi7YNvwniCBLVWssPPsIfHFVXGBgma1U0zcvqslT6a
+                  xi827iTWZuAXRsyd+LUzrV/cxTgtu/O3X1TOj98/Nc3+rsHZsneq7AQB8jKqtbRW
+                  jm75ddkhAoGBAO4qcvIfRrRhmpSKmCJg2pixJOvZjnqC/aE+k79gx5WgbyLm8jmO
+                  xNkniQ1l5AFZ+NTLFkkylaaRW30fQyiE+1GQ7WN/nP+1cDM7EUbo42qcKhXkxmKc
+                  VRO7jhBjz3l8MvTTvOW6g9ga/dK43p+xxMFfxyQH1pSZlsNHaee00qM9AoGBAN03
+                  /UP+bEHLQdpvAQMnNY/GzvFPuCb/T5eceRVluvXcl7dTqpvhRGBMdJz0ueoeRIk/
+                  R8Ju1kZMBVG14KVgwfOBg21jueOSyUk8z3GoNAzCxi5LgA1897m7H9FYNY48SYbK
+                  zHX4ijOaeX8pUhB4UhR5Sc3V28i8ZE3CtK18FDwfAoGBAN4ynlEEGvv5P7Wr5CnW
+                  wLrKMk8UBxiHk0dXUZKwISSYrHccjgpjB4Ytm3DziZg1L7Cf1Kfv2KyxWnDOtOJd
+                  xvcfRkqY6Ymr5gT167WDW4DAN4d7jBa+EaW6St1BsXR/Ci9eSBLwQ0dgT0TEk3bb
+                  7FwZFnqoEWtMK9r+inDRQ99lAoGBAJdfkZluRku7NwOuQ4YR1W/dvYuYXk2pFKCM
+                  /Lnsk8NbQCG9SZhCzBQNHRqtx23xajp0J7lfOJZ/vIAOMXtYuz7SF8nJnNChh8Tq
+                  rJR8Yal9ujjBhw0zvxvDdOE+N99tV2655LCw8nifMpYWA0ar3paN7DfCKBOy/fvL
+                  yPCRYBNHAoGAZWQrdWFnP85NedUhvtORp9yUTpJRbuNR1nK53jf0xqQDHaCQ63fl
+                  uyJrag4j/AUvwePoiREUByI9lGoaT99idJmT6bVwlYsCFiVZ1Z5R0Y7KBXbTD4q7
+                  T89/XzJAknVZ0LQFKiLf7j+aDglBiSKCQsyQrtvv5dWL7SqQtxpkLEs=
+                  -----END RSA PRIVATE KEY-----
         run: |
           # Debugging output (you can remove after confirming)
           echo "EC2_HOST: $HOST"
