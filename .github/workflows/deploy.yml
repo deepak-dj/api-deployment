@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch
+      - main
 
 jobs:
   deploy:
@@ -14,24 +14,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up SSH key for EC2 access
+      # Set up SSH with the private key from GitHub Secrets
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      # Copy code to EC2 using SCP
+      # Test SSH connection to EC2 (Optional, for debugging)
+      - name: Test SSH connection
+        run: |
+          ssh -o StrictHostKeyChecking=no -T ubuntu@${{ secrets.EC2_PUBLIC_IP }}
+
+      # Copy code to EC2
       - name: Copy code to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i /tmp/ssh_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} "mkdir -p /home/ubuntu/app"
+          # Make sure the SSH key is available in /tmp/ssh_key
+          echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/ssh_key
+          chmod 600 /tmp/ssh_key
           scp -i /tmp/ssh_key -o StrictHostKeyChecking=no -r ./ ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app
 
-      # SSH into EC2 and restart application (e.g., using Docker, Gunicorn, etc.)
+      # Restart application on EC2
       - name: Restart application on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i /tmp/ssh_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+          ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
             cd /home/ubuntu/app
-            git pull origin main  # Pull the latest code if needed
-            # Any command to restart the app, e.g., Docker or systemd
-            sudo systemctl restart myapp.service  # Or your app restart command
+            git pull origin main  # Optional, if using git
+            sudo systemctl restart myapp.service  # Adjust to your service
           EOF
