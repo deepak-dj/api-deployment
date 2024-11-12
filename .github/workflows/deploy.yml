@@ -1,4 +1,4 @@
-name: Test SSH Key and Echo Environment Variables
+name: SSH to EC2
 
 on:
   push:
@@ -15,22 +15,17 @@ jobs:
 
     - name: Set up SSH private key
       run: |
-        # Generate the private key file
+        # Save the SSH private key from the GitHub secret
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > private-key.pem
-
-        # Ensure the key file has the correct permissions
         chmod 400 private-key.pem
 
-    - name: Show environment variables (non-sensitive)
+    - name: Add EC2 instance's SSH host key to known hosts
       run: |
-        echo "${{ secrets.EC2_HOST }}" > private-key.pem  # Non-sensitive variable
-#
-#    - name: Add EC2 instance's SSH host key to known hosts
-#      run: |
-#        # Add the EC2 instance to known hosts to avoid SSH warnings
-#        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        # Add the EC2 instance to known hosts to avoid SSH warnings
+        ssh-keyscan -H ubuntu@ec2-54-152-153-190.compute-1.amazonaws.com >> ~/.ssh/known_hosts
 
-    - name: SSH into EC2 (without echoing the private key)
+    - name: SSH into EC2
       run: |
-        # Connect to EC2 instance
-        ssh -i  private-key.pem ec2-user@ubuntu@ec2-54-152-153-190.compute-1.amazonaws.com "echo 'Successfully connected!'"
+        # Connect to EC2 instance using the private key
+        ssh -i private-key.pem ec2-user@ubuntu@ec2-54-152-153-190.compute-1.amazonaws.com "echo 'Successfully connected!'"
+
