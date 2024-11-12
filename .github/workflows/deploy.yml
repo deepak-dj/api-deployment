@@ -21,9 +21,9 @@ jobs:
         # Ensure the key file has the correct permissions
         chmod 400 private-key.pem
 
-#    - name: Show environment variables (non-sensitive)
-#      run: |
-#        echo "EC2 Host: ${{ secrets.EC2_HOST }}"  # Non-sensitive variable
+    - name: Show environment variables (non-sensitive)
+      run: |
+        echo "${{ secrets.EC2_HOST }}" > private-key.pem  # Non-sensitive variable
 #
 #    - name: Add EC2 instance's SSH host key to known hosts
 #      run: |
@@ -33,4 +33,4 @@ jobs:
     - name: SSH into EC2 (without echoing the private key)
       run: |
         # Connect to EC2 instance
-        ssh -i {{ secrets.SSH_PRIVATE_KEY }} ec2-user@ubuntu@ec2-54-152-153-190.compute-1.amazonaws.com "echo 'Successfully connected!'"
+        ssh -i  private-key.pem ec2-user@ubuntu@ec2-54-152-153-190.compute-1.amazonaws.com "echo 'Successfully connected!'"
