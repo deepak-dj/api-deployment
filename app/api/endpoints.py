@@ -77,7 +77,7 @@ async def create_data(data: IndicationCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
-@router.post("/m-b")
+@router.post("/market-basket")
 async def create_market_data(data: MarketBasketCreate, db: Session = Depends(get_db)):
     try:
         next_id = get_next_id(db, 'market_basket', 'id')
