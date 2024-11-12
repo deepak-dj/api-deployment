@@ -35,7 +35,7 @@ jobs:
           USERNAME: ${{ secrets.EC2_USERNAME }}
           SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
         run: |
-          # Debugging the environment variables
+          # Debugging output (you can remove after confirming)
           echo "EC2_HOST: $HOST"
           echo "EC2_USERNAME: $USERNAME"
 
