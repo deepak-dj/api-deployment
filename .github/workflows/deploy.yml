@@ -38,7 +38,7 @@ jobs:
           scp -i /tmp/ssh_key -o StrictHostKeyChecking=no -r * ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app
 
       # Restart application on EC2
-      - name: Restart application on EC2
+      - name: Start application on EC2
         run: |
           ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
             cd /home/ubuntu/app
