@@ -1,53 +1,36 @@
-name: Deploy FastAPI to EC2
+name: Test SSH Key and Echo Environment Variables
 
 on:
   push:
     branches:
-      - main  # Trigger deploy on push to main branch
+      - main  # Trigger on push to the main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Set up Python environment
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
-
-    - name: Install Docker
+    - name: Set up SSH private key
       run: |
-        sudo apt-get update
-#        sudo apt-get install -y docker.io
+        # Generate the private key file
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > private-key.pem
 
-    - name: Set AWS Credentials
+        # Ensure the key file has the correct permissions
+        chmod 400 private-key.pem
+
+    - name: Show environment variables (non-sensitive)
       run: |
-        echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-        echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
-        echo "AWS_DEFAULT_REGION=us-east-1" >> $GITHUB_ENV  # Adjust region if necessary
+        echo "EC2 Host: ${{ secrets.EC2_HOST }}"  # Non-sensitive variable
 
-    - name: Build Docker Image
+    - name: Add EC2 instance's SSH host key to known hosts
       run: |
-        docker build -t fastapi-app .
+        # Add the EC2 instance to known hosts to avoid SSH warnings
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-#    - name: Push Docker Image to AWS ECR (Optional)
-#      run: |
-#        aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | docker login --username AWS --password-stdin <your_account_id>.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
-#        docker tag fastapi-app:latest <your_account_id>.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/fastapi-app:latest
-#        docker push <your_account_id>.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/fastapi-app:latest
-
-    - name: Deploy to EC2
-      run:  |
-        echo "${{ secrets.EC2_PRIVATE_KEY }}" > private_key.pem
-        chmod 600 private_key.pem
-        mkdir -p ~/.ssh
-        ssh-keyscan -H ec2-54-152-153-190.compute-1.amazonaws.com >> ~/.ssh/known_hosts
-        ssh -i private_key.pem ubuntu@ec2-54-152-153-190.compute-1.amazonaws.com << 'EOF'
-          docker pull <your_account_id>.dkr.ecr.us-east-1.amazonaws.com/fastapi-app:latest
-          docker stop fastapi-container || true
-          docker rm fastapi-container || true
-          docker run -d --name fastapi-container -p 80:80 <your_account_id>.dkr.ecr.us-east-1.amazonaws.com/fastapi-app:latest
-        EOF
+    - name: SSH into EC2 (without echoing the private key)
+      run: |
+        # Connect to EC2 instance
+        ssh -i private-key.pem ec2-user@${{ secrets.EC2_HOST }} "echo 'Successfully connected!'"
