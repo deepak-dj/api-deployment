@@ -24,11 +24,11 @@ jobs:
     - name: Show environment variables (non-sensitive)
       run: |
         echo "EC2 Host: ${{ secrets.EC2_HOST }}"  # Non-sensitive variable
-
-    - name: Add EC2 instance's SSH host key to known hosts
-      run: |
-        # Add the EC2 instance to known hosts to avoid SSH warnings
-        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+#
+#    - name: Add EC2 instance's SSH host key to known hosts
+#      run: |
+#        # Add the EC2 instance to known hosts to avoid SSH warnings
+#        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
     - name: SSH into EC2 (without echoing the private key)
       run: |
