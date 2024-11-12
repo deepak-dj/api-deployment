@@ -1,56 +1,37 @@
-name: Deploy FastAPI to EC2
+name: Deploy to EC2
 
 on:
   push:
     branches:
-      - main  # Deploy when changes are pushed to the main branch
+      - main  # Trigger on push to the main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # Checkout code
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Set up SSH key for EC2 access
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-    # Set up Docker
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      # Copy code to EC2 using SCP
+      - name: Copy code to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i /tmp/ssh_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} "mkdir -p /home/ubuntu/app"
+          scp -i /tmp/ssh_key -o StrictHostKeyChecking=no -r ./ ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app
 
-    # Log in to Docker Hub
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    # Build the Docker image
-    - name: Build Docker image
-      run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/dockerapi-backend .
-
-    # Push the Docker image to Docker Hub
-    - name: Push Docker image
-      run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/dockerapi-backend
-
-    # Deploy to EC2 instance via SSH
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@v0.1.1
-      with:
-        host: ${{ secrets.EC2_PUBLIC_IP }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        port: 22
-        script: |
-          # Pull the latest Docker image on EC2
-          docker pull ${{ secrets.DOCKER_USERNAME }}/dockerapi-backend
-
-          # Stop and remove the old container (if it exists)
-          docker stop fastapi-container || true
-          docker rm fastapi-container || true
-
-          # Run the new container
-          docker run -d --name fastapi-container -p 80:80 ${{ secrets.DOCKER_USERNAME }}/dockerapi-backend
+      # SSH into EC2 and restart application (e.g., using Docker, Gunicorn, etc.)
+      - name: Restart application on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i /tmp/ssh_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+            cd /home/ubuntu/app
+            git pull origin main  # Pull the latest code if needed
+            # Any command to restart the app, e.g., Docker or systemd
+            sudo systemctl restart myapp.service  # Or your app restart command
+          EOF
