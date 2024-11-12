@@ -22,7 +22,7 @@ jobs:
 
       - name: Run commands on EC2 via SSM
         run: |
-          INSTANCE_ID="i-xxxxxxxxxxxxxxxxx"  # Your EC2 instance ID
+          INSTANCE_ID="i-059577f9ea34b2a0e"  # Your EC2 instance ID
           DOCUMENT_NAME="AWS-RunShellScript"
           COMMAND="echo 'Hello from GitHub Actions!'"
 
