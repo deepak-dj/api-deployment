@@ -63,7 +63,7 @@ def get_next_id(db: Session, table_name: str, id_column_name: str) -> int:
     return max_id + 1
 
 
-@router.post("/data")
+@router.post("/post-data")
 async def create_data(data: IndicationCreate, db: Session = Depends(get_db)):
     try:
         next_id = get_next_id(db, 'indications', 'id')
@@ -91,7 +91,7 @@ async def create_market_data(data: MarketBasketCreate, db: Session = Depends(get
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
-@router.get("/data")
+@router.get("/get-data")
 async def get_data(indication: Optional[str] = None, db: Session = Depends(get_db)):
     try:
         # Query the database
