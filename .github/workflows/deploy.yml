@@ -26,6 +26,9 @@ jobs:
       # Step 4: Save Docker image to file
       - name: Save Docker image as a tarball
         run: |
+          echo "EC2_HOST: ${{ secrets.EC2_HOST }}"
+                   echo "EC2_USERNAME: ${{ secrets.EC2_USERNAME }}"
+                   echo "SSH_KEY: ${SSH_KEY}"
           docker save -o my-fastapi-app.tar my-fastapi-app:latest
 
       # Step 5: Deploy to EC2 instance
