@@ -33,11 +33,11 @@ jobs:
       run: |
         docker build -t fastapi-app .
 
-    - name: Push Docker Image to AWS ECR (Optional)
-      run: |
-        aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | docker login --username AWS --password-stdin <your_account_id>.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
-        docker tag fastapi-app:latest <your_account_id>.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/fastapi-app:latest
-        docker push <your_account_id>.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/fastapi-app:latest
+#    - name: Push Docker Image to AWS ECR (Optional)
+#      run: |
+#        aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | docker login --username AWS --password-stdin <your_account_id>.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+#        docker tag fastapi-app:latest <your_account_id>.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/fastapi-app:latest
+#        docker push <your_account_id>.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/fastapi-app:latest
 
     - name: Deploy to EC2
       run: |
