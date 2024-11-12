@@ -33,4 +33,4 @@ jobs:
     - name: SSH into EC2 (without echoing the private key)
       run: |
         # Connect to EC2 instance
-        ssh -i private-key.pem ec2-user@${{ secrets.EC2_HOST }} "echo 'Successfully connected!'"
+        ssh -i private-key.pem ec2-user@ubuntu@ec2-54-152-153-190.compute-1.amazonaws.com "echo 'Successfully connected!'"
