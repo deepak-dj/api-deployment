@@ -35,7 +35,7 @@ jobs:
       - name: Copy code to EC2
         run: |
           # Ensure the correct file/directory is passed to scp
-          scp -i /tmp/ssh_key -o StrictHostKeyChecking=no -r ./ ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app
+          scp -i /tmp/ssh_key -o StrictHostKeyChecking=no -r * ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app
 
       # Restart application on EC2
       - name: Restart application on EC2
