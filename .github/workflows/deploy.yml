@@ -21,9 +21,9 @@ jobs:
         # Ensure the key file has the correct permissions
         chmod 400 private-key.pem
 
-    - name: Show environment variables (non-sensitive)
-      run: |
-        echo "EC2 Host: ${{ secrets.EC2_HOST }}"  # Non-sensitive variable
+#    - name: Show environment variables (non-sensitive)
+#      run: |
+#        echo "EC2 Host: ${{ secrets.EC2_HOST }}"  # Non-sensitive variable
 #
 #    - name: Add EC2 instance's SSH host key to known hosts
 #      run: |
