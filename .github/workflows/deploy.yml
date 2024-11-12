@@ -21,7 +21,6 @@ jobs:
     - name: Install Docker
       run: |
         sudo apt-get update
-        sudo apt-get install -y docker.io
 
     - name: Login to AWS
       run: |
