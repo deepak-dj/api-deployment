@@ -22,7 +22,7 @@ jobs:
     - name: Add EC2 instance's SSH host key to known hosts
       run: |
         # Add the EC2 instance to known hosts to avoid SSH warnings
-        ssh-keyscan -H ubuntu@ec2-54-152-153-190.compute-1.amazonaws.com >> ~/.ssh/known_hosts
+        ssh-keyscan -H ubuntu@54.152.153.190 >> ~/.ssh
 
     - name: SSH into EC2
       run: |
