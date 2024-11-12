@@ -27,11 +27,6 @@ jobs:
       - name: Save Docker image as a tarball
         run: |
           docker save -o my-fastapi-app.tar my-fastapi-app:latest
-        # Store the tarball as an artifact (optional)
-        # uses: actions/upload-artifact@v2
-        # with:
-        #   name: my-fastapi-app
-        #   path: my-fastapi-app.tar
 
       # Step 5: Deploy to EC2 instance
       - name: Deploy to EC2
@@ -40,6 +35,16 @@ jobs:
           USERNAME: ${{ secrets.EC2_USERNAME }}
           SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
         run: |
+          # Debugging the environment variables
+          echo "EC2_HOST: $HOST"
+          echo "EC2_USERNAME: $USERNAME"
+
+          # Check if the variables are set correctly
+          if [ -z "$HOST" ] || [ -z "$USERNAME" ] || [ -z "$SSH_KEY" ]; then
+            echo "One or more variables are not set correctly. Please check the secrets."
+            exit 1
+          fi
+
           # Copy Docker image tarball to the EC2 instance
           scp -o StrictHostKeyChecking=no -i "$SSH_KEY" my-fastapi-app.tar $USERNAME@$HOST:/home/$USERNAME/
 
@@ -53,5 +58,5 @@ jobs:
             docker rm fastapi-container || true
 
             # Run a new container
-            docker run -d --name fastapi-container -p 80:8000 my-fastapi-app:latest
+            docker run -d --name fastapi-container -p 8000:8000 my-fastapi-app:latest
           EOF
