@@ -1,31 +1,32 @@
-name: SSH to EC2
+name: Deploy to EC2 via SSM
 
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up SSH private key
-      run: |
-        # Save the SSH private key from the GitHub secret
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > private-key.pem
-        chmod 400 private-key.pem
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: 'us-east-1'
 
-    - name: Add EC2 instance's SSH host key to known hosts
-      run: |
-        # Add the EC2 instance to known hosts to avoid SSH warnings
-        ssh-keyscan -H ubuntu@54.152.153.190 >> ~/.ssh
+      - name: Run commands on EC2 via SSM
+        run: |
+          INSTANCE_ID="i-xxxxxxxxxxxxxxxxx"  # Your EC2 instance ID
+          DOCUMENT_NAME="AWS-RunShellScript"
+          COMMAND="echo 'Hello from GitHub Actions!'"
 
-    - name: SSH into EC2
-      run: |
-        # Connect to EC2 instance using the private key
-        ssh -i private-key.pem ec2-user@ubuntu@ec2-54-152-153-190.compute-1.amazonaws.com "echo 'Successfully connected!'"
-
+          aws ssm send-command \
+            --instance-ids $INSTANCE_ID \
+            --document-name $DOCUMENT_NAME \
+            --parameters 'commands=["$COMMAND"]'
